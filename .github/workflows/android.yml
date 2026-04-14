@@ -19,21 +19,30 @@ jobs:
       - name: Install Cordova
         run: npm install -g cordova
 
+      - name: Install Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Create App
         run: cordova create app com.sandbox.app Sandbox
 
       - name: Add Android
         run: |
           cd app
-          cordova platform add android@latest
+          cordova platform add android
 
-      - name: Copy Files
+      - name: Copy Game
         run: cp index.html app/www/index.html
 
       - name: Build APK
         run: |
           cd app
-          cordova build android --no-telemetry
+          cordova build android
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
