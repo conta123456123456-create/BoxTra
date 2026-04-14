@@ -1,0 +1,42 @@
+name: Build APK
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      - name: Create App
+        run: cordova create app com.sandbox.app Sandbox
+
+      - name: Add Android
+        run: |
+          cd app
+          cordova platform add android@latest
+
+      - name: Copy Files
+        run: cp index.html app/www/index.html
+
+      - name: Build APK
+        run: |
+          cd app
+          cordova build android --no-telemetry
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
